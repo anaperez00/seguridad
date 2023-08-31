@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIFRADO AFIN</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+
+<body>
+    <h1>CIFRADO AFIN</h1>
+    <div class="formfloating">
+        <form action="{{url_for('cifrar')}}" method="post">
+         <h2>Cifrado</h2>
+            <textarea class="form-control" name="textoclaro" placeholder="INGRESE EL TEXTO CLARO PARA CIFRAR"
+            id="floatingTextarea1" style="width: 500px; height: 180px"></textarea>
+            <input type="number" name="decimacionA" placeholder="a: Cons. Decimación "style="width: 200px; height: 50px;">
+            <input type="text" name="desplazamientoB" placeholder="b: Cons. Desplazamiento" style="width: 200px; height: 50px;">
+            <button type="submit" class="btn btn-primary btn-lg">Cifrar</button>
+            <textarea class="form-control" readonly rows="5">{{texto_procesado}}{{decimacionA}}{{desplazamientoB}}{{texto_valores_procesados}}</textarea>
+
+    </div>
+
+    <div class="form-floating">
+        <form action="{{url_for('descifrar')}}" method="post">
+            <h2>Descifrado</h2>
+            <textarea class="form-control" name="textocifrado" placeholder="INGRESE EL TEXTO CIFRADO SIN TILDES"
+                id="floatingTextarea2" style="width: 500px; height: 180px"></textarea>
+            <button type="submit" class="btn btn-primary btn-lg">Descifrar</button>
+
+    </div>
+
+    <div>
+        {% if caracteres_asociados is defined %}
+        <textarea class="form-control" readonly rows="5">{{ caracteres_asociados }}</textarea>
+        <textarea class="form-control" readonly rows="5">{{ caracteres_asociados2 }}</textarea>
+        {% endif %}
+    </div>
+
+    <!-- Agrega un div para el gráfico -->
+    <div>
+        {% if grafico is defined %}
+        <img src="data:image/png;base64,{{ grafico }}" alt="Gráfico de barras">
+        {% endif %}
+    </div>
+
+    <br>
+    <!-- ... aqui lo otro que se vaya a imprimir ... -->
+    <br>
+
+</body>
+
+</html>
