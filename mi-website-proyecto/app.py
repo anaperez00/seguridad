@@ -42,8 +42,7 @@ valor_letra = {
     'Y': 25, 
     'Z': 26
 }
-
-valor_letraCifrado = {
+valor_letraC = {
     'A': 0, 
     'B': 1, 
     'C': 2, 
@@ -81,9 +80,34 @@ def asignar_valores(texto):
 def asignar_valoresCifrado(texto):
     # Diccionario para asignar valores a letras
     valor_letra = {
-        'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9,
-        'K': 10, 'L': 11, 'M': 12, 'N': 13, 'Ñ': 14, 'O': 15, 'P': 16, 'Q': 17, 'R': 18, 'S': 19,
-        'T': 20, 'U': 21, 'V': 22, 'W': 23, 'X': 24, 'Y': 25, 'Z': 26, ' ': 27  # Espacio se mapea a sí mismo
+        'A': 0, 
+        'B': 1, 
+        'C': 2, 
+        'D': 3, 
+        'E': 4,
+        'F': 5, 
+        'G': 6, 
+        'H': 7, 
+        'I': 8, 
+        'J': 9,
+        'K': 10, 
+        'L': 11, 
+        'M': 12, 
+        'N': 13, 
+        'Ñ': 14,
+        'O': 15, 
+        'P': 16,   
+        'Q': 17, 
+        'R': 18, 
+        'S': 19,
+        'T': 20,   
+        'U': 21, 
+        'V': 22, 
+        'W': 23, 
+        'X': 24,
+        'Y': 25, 
+        'Z': 26,
+        ' ': 27
     }
     
     valores = [valor_letra[char] for char in texto]
@@ -108,9 +132,8 @@ def calcular_inversa_modulo27(valor):
     return None
 
 def limpiar_texto(texto):
-    # Remover caracteres de retorno de carro y salto de línea
     texto = texto.replace('\r', '').replace('\n', '')
-    
+
     # Remover caracteres especiales y números, excepto la 'Ñ'
     caracteres_especiales = '''!"#$%&'()*+,-./0123456789:;<=>?@[\]^_`{|}~'''
     caracteres_no_remover = ['ñ']  # Lista de caracteres que no se eliminarán
@@ -137,25 +160,20 @@ def cifrar():
     texto_valores = asignar_valoresCifrado(texto_procesado)
     
     # Realizar la operación de multiplicación por decimacionA a los elementos numéricos de texto_valores
-    texto_valores_procesados = []
-    for valor in texto_valores:
-        if isinstance(valor, int):  # Verificar si el valor es numérico
-            if valor == 27:
-                texto_valores_procesados.append(valor)
-            else:
-                valor_procesado = (valor * decimacionA) % 27
-                texto_valores_procesados.append(valor_procesado)
     
-    return render_template('index.html',texto_valores_procesados=texto_valores_procesados)
+    operacion = [val if val == 27 else (val * decimacionA + desplazamientoB) % 27 for val in texto_valores]
+          
+    texto_letras = [list(valor_letraC.keys())[list(valor_letraC.values()).index(valor)] if valor in valor_letraC.values() else valor for valor in operacion]
 
+    texto_cifrado = ''.join(map(str, texto_letras))
 
-
-
+    return render_template('index.html',texto_valores_procesados=texto_cifrado)
+    
+    
 @app.route("/descifrar", methods=['POST'])
 def descifrar():
     texto_cifrado = request.form['textocifrado'] 
-   # correspondienteE = request.form['correspondienteE']
-    #correspondienteA= request.form['correspondienteA']
+
 
     texto_cifrado = texto_cifrado.upper()
     resultados = []  # Lista para almacenar los resultados}
@@ -165,6 +183,8 @@ def descifrar():
         texto_sin_espacios = texto_cifrado.replace(" ", "")
         valores = asignar_valores(texto_sin_espacios)
         valores2 = asignar_valores(texto_sin_espacios)
+        valores3= asignar_valores(texto_sin_espacios)
+        valores4= asignar_valores(texto_sin_espacios)
         conteo_caracteres = contar_caracteres(texto_sin_espacios)
 
         for char, count in conteo_caracteres.items():
@@ -193,17 +213,19 @@ def descifrar():
         valores_del_texto2 = valores2
         inversa_consE2= calcular_inversa_modulo27(consE)
         mul2 = resta2 * inversa_consE2
-        a2= mul % 27
+        a2= mul2 % 27
         inversaFinal2= calcular_inversa_modulo27(a2)
 
+ 
 
         for i in range(len(valores_del_texto)):
             valores_del_texto[i] = ((valores_del_texto[i] - variable_b) * calcular_inversa_modulo27(a)) % 27
             caracteres_asociados = [None] * len(valores_del_texto)
 
         for i in range(len(valores_del_texto2)):
-                valores_del_texto2[i] = ((valores_del_texto2[i] - variable_b2) * calcular_inversa_modulo27(a2)) % 27
-                caracteres_asociados2 = [None] * len(valores_del_texto2)
+            valores_del_texto2[i] = ((valores_del_texto2[i] - variable_b2) * calcular_inversa_modulo27(a2)) % 27
+            caracteres_asociados2 = [None] * len(valores_del_texto2)
+                
 
         for i, valor in enumerate(valores_del_texto):
             for char, val in valor_letra.items():
@@ -216,6 +238,8 @@ def descifrar():
                 if val == valor:
                     caracteres_asociados2[i] = char
                     break
+
+
 
         resultado = {}
         output = f'el texto es valido{resultado}'
@@ -241,8 +265,7 @@ def descifrar():
     else: 
         output = "el texto es invalido"
 
-    return render_template('index.html', resultado=f'el textoes impresionantemente largo {output}', resultados=resultados, constante=constante, caracteres_asociados="".join(caracteres_asociados), caracteres_asociados2="".join(caracteres_asociados2), grafico=imagen_base64)
-
+    return render_template('index.html', resultado=f'el textoes impresionantemente largo {output}', resultados=resultados, constante=constante, caracteres_asociados="".join(caracteres_asociados), caracteres_asociados2="".join(caracteres_asociados2),grafico=imagen_base64)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
